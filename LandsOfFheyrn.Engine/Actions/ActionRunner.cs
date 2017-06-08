@@ -1,4 +1,4 @@
-using LandsOfFheyrn.Engine.Scripting;
+using LandsOfFheyrn.Engine.Managers;
 using MoonSharp.Interpreter;
 
 namespace LandsOfFheyrn.Engine.Actions
@@ -13,12 +13,12 @@ namespace LandsOfFheyrn.Engine.Actions
             ActionName = name;
         }
 
-        public void Init()
+        public void Init(ScriptManager scripts)
         {
             var script = new Script();
             script.Globals["MudAction"] = typeof(LOFAction);
             script.Globals["TimedMudAction"] = typeof(TimedLOFAction);
-            script.DoString(ScriptManager.Instance.GetScript(ScriptType.ActionRunner, ActionName));
+            script.DoString(scripts.GetScript(ScriptType.ActionRunner, ActionName));
             _script = script;
         }
         

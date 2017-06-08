@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
+using LandsOfFheyrn.Engine.Actions;
 using LandsOfFheyrn.Engine.Objects;
 using MoonSharp.Interpreter;
 
@@ -9,22 +11,19 @@ namespace LandsOfFheyrn.Engine.Managers
 	public enum ScriptType
 	{
 		Game = 1,
-		MudComponent,
+		LOFComponent,
 		ActionRunner,
-		MudCommand
+		LOFCommand
 	}
 
 	public class ScriptManager
 	{
-        static readonly ScriptManager _instance = new ScriptManager();
-        public static ScriptManager Instance => _instance;
-
         readonly Dictionary<string, string> _gameScripts;
         readonly Dictionary<string, string> _componentScripts;
         readonly Dictionary<string, string> _actionRunnerScripts;
 	    readonly Dictionary<string, string> _commandScripts;
 
-		ScriptManager()
+		public ScriptManager()
 		{
 			_componentScripts = new Dictionary<string, string>();
 			_gameScripts = new Dictionary<string, string>();
@@ -32,29 +31,28 @@ namespace LandsOfFheyrn.Engine.Managers
 			_commandScripts = new Dictionary<string, string>();
 
 			UserData.RegisterType<Script>();
-			UserData.RegisterType<IMessageHandler>();
+		//	UserData.RegisterType<IMessageHandler>();
 			UserData.RegisterType<Task>();
-			UserData.RegisterType<MudCommand>();
-			UserData.RegisterType<ComponentSet>();
+			UserData.RegisterType<LOFCommand>();
+		//	UserData.RegisterType<ComponentSet>();
             UserData.RegisterType<LOFComponent>();
-			UserData.RegisterType<TraitSet>();
 			UserData.RegisterType<LOFTrait>();
 			UserData.RegisterType<Table>();
 			UserData.RegisterType<Game>();
 			//UserData.RegisterType<List<MudEntity>>();
 
 			UserData.RegisterType<LOFEntity>();
-			UserData.RegisterType<List<MudEntity>>();
-			UserData.RegisterType<MudAccount>();
-			UserData.RegisterType<MudRoom>();
-			//UserData.RegisterType<MudPortal>();
-			UserData.RegisterType<MudZone>();
 			UserData.RegisterType<List<LOFEntity>>();
-			UserData.RegisterType<List<MudRoom>>();
+	//		UserData.RegisterType<MudAccount>();
+		//	UserData.RegisterType<MudRoom>();
+			//UserData.RegisterType<MudPortal>();
+		//	UserData.RegisterType<MudZone>();
+			UserData.RegisterType<List<LOFEntity>>();
+		//	UserData.RegisterType<List<MudRoom>>();
 			//UserData.RegisterType<List<MudPortal>>();
-			UserData.RegisterType<List<MudZone>>();
-			UserData.RegisterType<MudWorld>();
-			UserData.RegisterType<MudAction>();
+	//		UserData.RegisterType<List<MudZone>>();
+	//		UserData.RegisterType<MudWorld>();
+			UserData.RegisterType<LOFAction>();
 		}
 
 		// public bool AddScript(string name, string lua)
@@ -81,9 +79,9 @@ namespace LandsOfFheyrn.Engine.Managers
 						return _actionRunnerScripts[name];
 					case ScriptType.Game:
 						return _gameScripts[name];
-					case ScriptType.MudComponent:
+					case ScriptType.LOFComponent:
 						return _componentScripts[name];
-					case ScriptType.MudCommand:
+					case ScriptType.LOFCommand:
 						return _commandScripts[name];
 					default:
 						return null;
@@ -120,11 +118,11 @@ namespace LandsOfFheyrn.Engine.Managers
 					files = Directory.GetFiles(Path.Combine("GameScripts", "Game"), "*.lua", SearchOption.AllDirectories);
 					_gameScripts.Clear();
 					break;
-				case ScriptType.MudComponent:
+				case ScriptType.LOFComponent:
 					files = Directory.GetFiles(Path.Combine("GameScripts", "Components"), "*.lua", SearchOption.AllDirectories);
 					_componentScripts.Clear();
 					break;
-				case ScriptType.MudCommand:
+				case ScriptType.LOFCommand:
 					files = Directory.GetFiles(Path.Combine("GameScripts", "Commands"), "*.lua", SearchOption.AllDirectories);
 					_commandScripts.Clear();
 					break;
@@ -138,9 +136,9 @@ namespace LandsOfFheyrn.Engine.Managers
 
 				if (type == ScriptType.Game)
 					_gameScripts.Add(name, script);
-				else if (type == ScriptType.MudComponent)
+				else if (type == ScriptType.LOFComponent)
 					_componentScripts.Add(name, script);
-				else if (type == ScriptType.MudCommand)
+				else if (type == ScriptType.LOFCommand)
 					_commandScripts.Add(name, script);
 				else
 					_actionRunnerScripts.Add(name, script);
